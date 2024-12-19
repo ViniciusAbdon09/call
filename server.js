@@ -60,9 +60,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('recording-started', (userId) => {
-  });
-
-  socket.on('start-recording', (userId) => {
     const roomId = getRoomFromSocket(socket); // Implemente esta função conforme sua lógica
     socket.to(roomId).emit('recording-started', userId);
   });
@@ -71,8 +68,8 @@ io.on('connection', (socket) => {
     const roomId = getRoomFromSocket(socket);
     socket.to(roomId).emit('recording-stopped');
   });
+});
 
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
-  });
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
 });
