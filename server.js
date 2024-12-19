@@ -32,7 +32,7 @@ const io = new Server(server, {
 
 // Configuração do PeerServer
 const peerServer = ExpressPeerServer(server, {
-  path: '/myapp',
+  path: '/',
   allow_discovery: true,
   proxied: true
 });
@@ -52,6 +52,14 @@ io.on('connection', (socket) => {
     console.log(`Usuário ${userId} entrou na sala ${roomId}`);
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', userId);
+
+    socket.on('start-recording', (userId) => {
+      socket.to(roomId).emit('recording-started', userId);
+    });
+
+    socket.on('stop-recording', () => {
+      socket.to(roomId).emit('recording-stopped');
+    });
 
     socket.on('disconnect', () => {
       console.log(`Usuário ${userId} desconectou`);
