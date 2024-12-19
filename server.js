@@ -52,17 +52,20 @@ io.on('connection', (socket) => {
     console.log(`Usuário ${userId} entrou na sala ${roomId}`);
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', userId);
-
-    socket.on('start-recording', (userId) => {
-      socket.to(roomId).emit('recording-started', userId);
+    
+    // Eventos de gravação
+    socket.on('start-recording', (recordingUserId) => {
+      console.log(`Usuário ${recordingUserId} iniciou gravação na sala ${roomId}`);
+      socket.to(roomId).emit('recording-started', recordingUserId);
     });
 
-    socket.on('stop-recording', () => {
-      socket.to(roomId).emit('recording-stopped');
+    socket.on('stop-recording', (recordingUserId) => {
+      console.log(`Usuário ${recordingUserId} parou gravação na sala ${roomId}`);
+      socket.to(roomId).emit('recording-stopped', recordingUserId);
     });
 
     socket.on('disconnect', () => {
-      console.log(`Usuário ${userId} desconectou`);
+      console.log(`Usuário ${userId} desconectou da sala ${roomId}`);
       socket.to(roomId).emit('user-disconnected', userId);
     });
   });
