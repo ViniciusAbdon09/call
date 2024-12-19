@@ -49,24 +49,21 @@ io.on('connection', (socket) => {
   console.log('Novo cliente conectado:', socket.id);
 
   socket.on('join-room', (roomId, userId) => {
-    console.log(`Usuário ${userId} entrou na sala ${roomId}`);
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', userId);
+    
+    // Adicionar os novos eventos de gravação aqui
+    socket.on('start-recording', (userId) => {
+      socket.to(roomId).emit('recording-started', userId);
+    });
+
+    socket.on('stop-recording', () => {
+      socket.to(roomId).emit('recording-stopped');
+    });
 
     socket.on('disconnect', () => {
-      console.log(`Usuário ${userId} desconectou`);
       socket.to(roomId).emit('user-disconnected', userId);
     });
-  });
-
-  socket.on('recording-started', (userId) => {
-    const roomId = getRoomFromSocket(socket); // Implemente esta função conforme sua lógica
-    socket.to(roomId).emit('recording-started', userId);
-  });
-
-  socket.on('stop-recording', () => {
-    const roomId = getRoomFromSocket(socket);
-    socket.to(roomId).emit('recording-stopped');
   });
 });
 
