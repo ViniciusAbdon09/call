@@ -32,7 +32,7 @@ const io = new Server(server, {
 
 // Configuração do PeerServer
 const peerServer = ExpressPeerServer(server, {
-  path: '/',
+  path: '/myapp',
   allow_discovery: true,
   proxied: true
 });
@@ -58,8 +58,21 @@ io.on('connection', (socket) => {
       socket.to(roomId).emit('user-disconnected', userId);
     });
   });
-});
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
+  socket.on('recording-started', (userId) => {
+  });
+
+  socket.on('start-recording', (userId) => {
+    const roomId = getRoomFromSocket(socket); // Implemente esta função conforme sua lógica
+    socket.to(roomId).emit('recording-started', userId);
+  });
+
+  socket.on('stop-recording', () => {
+    const roomId = getRoomFromSocket(socket);
+    socket.to(roomId).emit('recording-stopped');
+  });
+
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
+  });
 });
